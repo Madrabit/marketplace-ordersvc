@@ -12,27 +12,32 @@ var (
 )
 
 type Repository struct {
-	mu sync.RWMutex
-	m  map[uuid.UUID]Order
+	mu    sync.RWMutex
+	m     map[uuid.UUID]OrderRow
+	items map[uuid.UUID]ItemRow
 }
 
 func NewRepository() *Repository {
-	return &Repository{m: make(map[uuid.UUID]Order)}
+	return &Repository{m: make(map[uuid.UUID]OrderRow),
+		items: make(map[uuid.UUID]ItemRow)}
 }
 
-func (r *Repository) Create(ctx context.Context, o Order) (Order, error) {
+func (r *Repository) Create(ctx context.Context, o OrderRow, items []ItemRow) (OrderRow, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.m[o.Id] = o
+	for _, item := range items {
+		r.items[o.Id] = item
+	}
 	return o, nil
 }
 
-func (r *Repository) Get(ctx context.Context, id uuid.UUID) (Order, error) {
+func (r *Repository) Get(ctx context.Context, id uuid.UUID) (OrderRow, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	o, ok := r.m[id]
 	if !ok {
-		return Order{}, ErrorNotFound
+		return OrderRow{}, ErrorNotFound
 	}
 	return o, nil
 }
