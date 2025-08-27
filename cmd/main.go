@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/go-chi/chi/v5"
+	"github.com/madrabit/marketplace-ordersvc/internal/adapters/pricing"
 	"github.com/madrabit/marketplace-ordersvc/internal/orders"
 	"github.com/madrabit/marketplace-ordersvc/internal/web"
 	"net/http"
@@ -10,7 +11,7 @@ import (
 
 func main() {
 	repo := orders.NewRepository()
-	pricer := orders.NewInmemPricing()
+	pricer := pricing.NewPricingController("http://localhost:8081")
 	service := orders.NewService(repo, pricer)
 	controller := orders.NewController(service)
 	server := web.NewServer()

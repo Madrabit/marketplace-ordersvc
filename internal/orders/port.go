@@ -6,9 +6,9 @@ import (
 )
 
 type PriceItem struct {
-	ProductId uuid.UUID
-	Name      string
-	UnitPrice int64
+	ProductId uuid.UUID `json:"product_id"`
+	Name      string    `json:"name"`
+	UnitPrice int64     `json:"unit_price"`
 }
 
 type Pricing interface {
